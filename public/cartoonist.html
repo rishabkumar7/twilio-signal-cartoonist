@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Cartoonist Dashboard</title>
+    {/* Twilio Video CDN */}
+    <script src="https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      .room-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .room-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .room-card h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+      }
+      .room-info {
+        margin-bottom: 15px;
+        color: #666;
+      }
+      .join-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .join-button:hover {
+        background-color: #0056b3;
+      }
+      .refresh-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .refresh-button:hover {
+        background-color: #218838;
+      }
+      .header {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Cartoonist Dashboard</h1>
+      <p>Join a room to start drawing for your client</p>
+    </div>
+    <button class="refresh-button" onclick="fetchRooms()">Refresh Rooms</button>
+    <div id="room-list" class="room-list">
+      <!-- Rooms will be populated here -->
+    </div>
+    <div id="video-container" style="display: none;"></div>
+    <script src="cartoonist.js"></script>
+  </body>
+</html> 
