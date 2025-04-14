@@ -7,73 +7,209 @@
     <script src="https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
+      :root {
+        /* Twilio Paste Colors */
+        --color-background-primary: #f4f4f6;
+        --color-background-secondary: #ffffff;
+        --color-background-brand: #0263e0; /* Twilio Blue */
+        --color-text-primary: #121c2d;
+        --color-text-secondary: #606b85;
+        --color-text-inverse: #ffffff;
+        --color-border-primary: #e1e3ea;
+        --color-border-focus: #2c3e50;
+        --color-background-destructive: #fde8e8;
+        --color-text-destructive: #d63638;
+        --color-background-success: #e6f4ea;
+        --color-text-success: #137333;
+        --color-background-warning: #fef7e0;
+        --color-text-warning: #b06000;
+        --color-background-info: #e8f0fe;
+        --color-text-info: #1967d2;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-background-primary);
+        color: var(--color-text-primary);
+      }
+
+      .header {
+        background-color: var(--color-background-brand);
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 24px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--color-text-inverse);
+      }
+
+      .header p {
+        margin: 8px 0 0;
+        color: var(--color-text-inverse);
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
       .room-list {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        padding: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .room-card {
+        background: var(--color-background-secondary);
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--color-border-primary);
+        transition: all 0.2s ease;
+      }
+
+      .room-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .room-info {
+        margin: 16px 0;
+      }
+
+      .room-info p {
+        display: flex;
+        align-items: center;
+        margin: 8px 0;
+        color: var(--color-text-secondary);
+      }
+
+      .room-info span:first-child {
+        margin-right: 8px;
+      }
+
+      .join-button {
+        background-color: var(--color-background-brand);
+        color: var(--color-text-inverse);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .join-button:hover {
+        background-color: #0350b7;
+      }
+
+      .join-button.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .refresh-button {
+        background-color: var(--color-background-secondary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-primary);
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        margin-bottom: 24px;
+      }
+
+      .refresh-button:hover {
+        background-color: var(--color-background-primary);
+        border-color: var(--color-border-focus);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-left: 8px;
+      }
+
+      .status-active {
+        background-color: var(--color-background-success);
+        color: var(--color-text-success);
+      }
+
+      .status-waiting {
+        background-color: var(--color-background-warning);
+        color: var(--color-text-warning);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 48px;
+        background-color: var(--color-background-secondary);
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .empty-state h3 {
+        margin-top: 0;
+        color: var(--color-text-primary);
+      }
+
+      .empty-state p {
+        color: var(--color-text-secondary);
+      }
+
+      #video-container {
+        display: none;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
         padding: 20px;
-      }
-      .room-card {
-        background: white;
+        background-color: var(--color-background-secondary);
         border-radius: 8px;
-        padding: 20px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        max-width: 1200px;
       }
-      .room-card h3 {
-        margin: 0 0 10px 0;
-        color: #333;
-      }
-      .room-info {
-        margin-bottom: 15px;
-        color: #666;
-      }
-      .join-button {
+
+      #video-container div {
+        position: relative;
         width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-      .join-button:hover {
-        background-color: #0056b3;
-      }
-      .refresh-button {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .refresh-button:hover {
-        background-color: #218838;
-      }
-      .header {
-        text-align: center;
-        padding: 20px;
-        background: white;
-        margin-bottom: 20px;
+        padding-top: 75%; /* 4:3 Aspect Ratio */
+        background-color: #000;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      #video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     </style>
   </head>
   <body>
     <div class="header">
       <h1>Cartoonist Dashboard</h1>
-      <p>Join a room to start drawing for your client</p>
+      <p>Join a room to start drawing</p>
     </div>
-    <button class="refresh-button" onclick="fetchRooms()">Refresh Rooms</button>
-    <div id="room-list" class="room-list">
-      <!-- Rooms will be populated here -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+      <button class="refresh-button" onclick="fetchRooms()">
+        <span>Refresh Rooms</span>
+      </button>
+      <div id="room-list" class="room-list"></div>
+      <div id="video-container"></div>
     </div>
-    <div id="video-container" style="display: none;"></div>
     <script src="cartoonist.js"></script>
   </body>
 </html> 
